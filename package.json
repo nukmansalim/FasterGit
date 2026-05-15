@@ -4,7 +4,7 @@
   "description": "A modern CLI tool to simplify Git and GitHub workflows",
   "type": "module",
   "bin": {
-    "gitjet": "./src/index.js"
+    "fastergit": "./src/index.js"
   },
   "scripts": {
     "dev": "node src/index.js",
