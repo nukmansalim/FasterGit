@@ -49,15 +49,18 @@ export async function quickCommit(options) {
     const branch = await getCurrentBranch(git);
     const status = await git.status();
 
-    spinner.text = "Pushing changes...";
+spinner.stop();
 
-    if (!status.tracking) {
-      await git.push(["--set-upstream", "origin", branch]);
-    } else {
-      await git.push();
-    }
+console.log(chalk.cyan("Pushing changes to remote..."));
+console.log(chalk.gray("Jika diminta login, gunakan GitHub Personal Access Token atau SSH key."));
 
-    spinner.succeed(chalk.green("Commit dan push berhasil."));
+if (!status.tracking) {
+  await git.push(["--set-upstream", "origin", branch]);
+} else {
+  await git.push();
+}
+
+console.log(chalk.green("✓ Commit dan push berhasil."));
   } catch (error) {
     spinner.fail(chalk.red(error.message));
   }
