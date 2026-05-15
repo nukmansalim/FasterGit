@@ -224,7 +224,14 @@ fastergit pr --merge 1
 
 Replace `1` with the pull request number.
 
+### Show Repository Status
+
+```bash
+fastergit status
+```
+Displays a clean summary of the current repository, including branch, tracking status, remote repository, last commit, and changed file counts.
 ---
+
 
 ## Example Workflow
 
