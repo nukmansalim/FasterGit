@@ -243,6 +243,9 @@ fastergit start
 # Create or update a file
 echo "Hello FasterGit" > test.txt
 
+#Show Repository Status
+fastergit status
+
 # Commit locally without pushing
 fastergit quickcommit -m "test: add initial file" --no-push
 
@@ -332,7 +335,6 @@ FasterGit is currently in the MVP stage. The core Git and GitHub workflows are f
 
 Planned improvements:
 
-- Add `fastergit status` command
 - Add `fastergit branch` command
 - Add conventional commit helper
 - Add automated tests for command handlers
