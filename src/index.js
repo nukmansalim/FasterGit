@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+
 import { program } from "commander";
 import chalk from "chalk";
 import boxen from "boxen";
