@@ -22,5 +22,8 @@
     "ora": "^7.0.1",
     "simple-git": "^3.21.0",
     "which": "^4.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.6"
   }
 }
