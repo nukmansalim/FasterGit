@@ -7,6 +7,7 @@ import boxen from "boxen";
 import { quickCommit } from "./commands/quickCommit.js";
 import { startRepo } from "./commands/startRepo.js";
 import { handlePR } from "./commands/pullRequest.js";
+import { showStatus } from "./commands/status.js";
 import { interactiveMode } from "./interactive/index.js";
 
 console.log(
@@ -42,6 +43,11 @@ program
   .option("-l, --list", "List pull requests")
   .option("-m, --merge <number>", "Merge pull request by number")
   .action(handlePR);
+
+program
+  .command("status")
+  .description("Show a clean summary of the current Git repository status")
+  .action(showStatus);
 
 program.action(interactiveMode);
 
