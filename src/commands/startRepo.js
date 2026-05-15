@@ -3,12 +3,20 @@ import chalk from "chalk";
 import ora from "ora";
 import { getGit } from "../services/gitService.js";
 
+async function checkRepoSafely(git) {
+  try {
+    return await git.checkIsRepo();
+  } catch {
+    return false;
+  }
+}
+
 export async function startRepo(options) {
   const git = getGit();
   const spinner = ora("Preparing repository...").start();
 
   try {
-    const isRepo = await git.checkIsRepo();
+    const isRepo = await checkRepoSafely(git);
 
     if (isRepo) {
       spinner.info(chalk.yellow("Repository sudah diinisialisasi."));
@@ -35,7 +43,8 @@ export async function startRepo(options) {
           name: "remoteUrl",
           message: "Remote URL:",
           when: (answers) => answers.addRemote,
-          validate: (value) => value.trim() ? true : "Remote URL tidak boleh kosong."
+          validate: (value) =>
+            value.trim() ? true : "Remote URL tidak boleh kosong."
         }
       ]);
 
