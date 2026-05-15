@@ -54,30 +54,31 @@ export async function handlePR(options) {
 }
 
 async function createPR() {
-  const spinner = ora("Creating pull request...").start();
-
   try {
-    const octokit = await getGitHubClient();
     const { git, owner, repo, branch } = await getRepoContext();
 
     if (branch === "main" || branch === "master") {
-      throw new Error("Jangan buat PR dari branch utama. Buat feature branch dulu.");
+      throw new Error(
+        "Jangan buat PR dari branch utama. Buat feature branch dulu."
+      );
     }
 
-    spinner.stop();
+    console.log(chalk.cyan("Checking GitHub authentication..."));
+    const octokit = await getGitHubClient();
 
     const answer = await inquirer.prompt([
       {
         type: "input",
         name: "title",
         message: "PR title:",
-        validate: (value) => value.trim() ? true : "Title tidak boleh kosong."
+        validate: (value) =>
+          value.trim() ? true : "Title tidak boleh kosong."
       },
       {
         type: "input",
         name: "body",
         message: "PR description:",
-        default: "Created with GitJet"
+        default: "Created with FasterGit"
       },
       {
         type: "input",
@@ -87,10 +88,26 @@ async function createPR() {
       }
     ]);
 
-    spinner.start("Pushing current branch...");
-    await git.push(["--set-upstream", "origin", branch]);
+    const status = await git.status();
 
-    spinner.text = "Calling GitHub API...";
+    if (!status.tracking || status.ahead > 0) {
+      console.log(chalk.cyan("Pushing current branch to remote..."));
+      console.log(
+        chalk.gray(
+          "Jika diminta login, gunakan GitHub Personal Access Token atau SSH key."
+        )
+      );
+
+      if (!status.tracking) {
+        await git.push(["--set-upstream", "origin", branch]);
+      } else {
+        await git.push();
+      }
+    } else {
+      console.log(chalk.gray("Branch sudah up to date dengan remote. Skip push."));
+    }
+
+    const spinner = ora("Creating pull request...").start();
 
     const response = await octokit.rest.pulls.create({
       owner,
@@ -103,7 +120,14 @@ async function createPR() {
 
     spinner.succeed(chalk.green(`PR created: ${response.data.html_url}`));
   } catch (error) {
-    spinner.fail(chalk.red(error.message));
+    if (error.status === 401) {
+      console.log(chalk.red("✖ GitHub token tidak valid atau sudah expired."));
+      console.log(chalk.gray("Buat token baru, lalu set dengan:"));
+      console.log(chalk.cyan('set -gx GITHUB_TOKEN "TOKEN_BARU"'));
+      return;
+    }
+
+    console.log(chalk.red(`✖ ${error.message}`));
   }
 }
 
