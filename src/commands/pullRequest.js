@@ -164,6 +164,13 @@ async function mergePR(number) {
       spinner.fail(chalk.red(response.data.message || "PR gagal di-merge."));
     }
   } catch (error) {
-    spinner.fail(chalk.red(error.message));
+    if (error.status === 401) {
+    console.log(chalk.red("✖ GitHub token tidak valid atau sudah expired."));
+    console.log(chalk.gray("Buat token baru, lalu set dengan:"));
+    console.log(chalk.cyan('set -gx GITHUB_TOKEN "TOKEN_BARU"'));
+    return;
+  }
+
+  console.log(chalk.red(`✖ ${error.message}`));
   }
 }
